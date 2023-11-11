@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Effectra\DataOptimizer;
 
+use Effectra\DataOptimizer\Contracts\DataRulesInterface;
 
 /**
  * DataRules class for defining validation rules and attributes for data.

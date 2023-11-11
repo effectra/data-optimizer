@@ -6,6 +6,7 @@ namespace Effectra\DataOptimizer;
 
 use ArrayIterator;
 use Closure;
+use Effectra\DataOptimizer\Contracts\DataCollectionInterface;
 use Traversable;
 
 /**

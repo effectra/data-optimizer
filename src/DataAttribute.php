@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Effectra\DataOptimizer;
 
+use Effectra\DataOptimizer\Contracts\DataAttributeInterface;
+
 /**
  * Class DataAttribute
  *
