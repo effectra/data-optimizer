@@ -1,0 +1,20 @@
+{
+    "name": "effectra/data-optimizer",
+    "description": "The Effectra Data Optimizer package.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Effectra\\DataOptimizer\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mohammed Taha",
+            "email": "info@mohammedtaha.net"
+        }
+    ],
+    "require": {
+    },
+    "minimum-stability": "stable"
+}
