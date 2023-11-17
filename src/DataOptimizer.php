@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Effectra\DataOptimizer;
 
 use Effectra\Database\Exception\DataValidatorException;
+use Effectra\DataOptimizer\Contracts\DataRulesInterface;
 
 /**
  * DataOptimizer class for optimizing and transforming data based on defined rules.
@@ -19,7 +20,7 @@ class DataOptimizer
     /**
      * @var DataRules $data_rule The data validation rules.
      */
-    private DataRules $data_rule;
+    private DataRulesInterface $data_rule;
 
     /**
      * Constructor for DataOptimizer.
@@ -35,8 +36,6 @@ class DataOptimizer
         }
 
         $this->data = $data;
-
-        $this->data_rule = new DataRules();
     }
 
     /**
@@ -130,14 +129,13 @@ class DataOptimizer
     /**
      * Optimize the data based on defined rules.
      *
-     * @param callable $rules A callback function to define rules using DataRules.
+     * @param DataRulesInterface $rules define rules using DataRulesInterface.
      * @return array The optimized data.
      */
-    public function optimize($rules): array
+    public function optimize(DataRulesInterface $rules): array
     {
         $data = [];
-        call_user_func($rules, $this->data_rule);
-        $this->data_rule->getRules();
+        $this->data_rule = $rules;
 
         if ((new DataValidator($this->data))->isArrayOfAssoc()) {
 
