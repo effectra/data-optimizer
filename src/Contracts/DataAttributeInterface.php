@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Effectra\DataOptimizer\Contracts;
 
 /**
- * Class DataAttribute
+ * interface DataAttributeInterface
  *
- * A class for managing attributes.
+ * A interface for managing attributes.
  * 
  * @package Effectra\DataOptimizer
  */

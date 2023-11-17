@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 namespace Effectra\DataOptimizer\Contracts;
 
-
+/**
+ * interface DataRulesInterface
+ *
+ * A interface for managing data rules.
+ * 
+ * @package Effectra\DataOptimizer
+ */
 interface DataRulesInterface extends DataAttributeInterface
 {
     /**

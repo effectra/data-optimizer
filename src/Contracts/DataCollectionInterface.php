@@ -7,6 +7,13 @@ namespace Effectra\DataOptimizer\Contracts;
 use Closure;
 use Traversable;
 
+/**
+ * interface DataCollectionInterface
+ *
+ * A interface for managing data collection.
+ * 
+ * @package Effectra\DataOptimizer
+ */
 interface DataCollectionInterface extends \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
