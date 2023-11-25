@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Effectra\DataOptimizer;
 
+use Closure;
+use Effectra\Database\Exception\DataValidatorException;
 use Effectra\DataOptimizer\Contracts\DataRulesInterface;
 
 /**
@@ -19,6 +21,31 @@ class DataRules extends DataAttribute implements DataRulesInterface
      * @var array $attributes An array of attributes .
      */
     protected array $attributes = [];
+
+    /**
+     * @var int $increment Increment value for adding keys.
+     */
+    private int $increment = 1;
+
+    /**
+     * Set the increment value.
+     *
+     * @return void
+     */
+    private function setIncrement(): void
+    {
+        ++$this->increment;
+    }
+
+    /**
+     * Get the increment value.
+     *
+     * @return int The increment value.
+     */
+    public function getIncrement(): int
+    {
+        return $this->increment;
+    }
 
     /**
      * Check if a rule with the specified key exists.
@@ -88,7 +115,7 @@ class DataRules extends DataAttribute implements DataRulesInterface
         return $this->setRule($key, 'json_encode');
     }
 
-     /**
+    /**
      * Set a rule for a key to validate as JSON decoded.
      *
      * @param string $key The key to validate as JSON.
@@ -260,8 +287,9 @@ class DataRules extends DataAttribute implements DataRulesInterface
      */
     public function renameKey(string $key, string $new_name): self
     {
+        $this->setAttribute('rename_' . $key, $key);
         $this->setAttribute("new_key_name_$key", $new_name);
-        return $this->setRule($key, 'rename');
+        return $this;
     }
 
     /**
@@ -276,5 +304,73 @@ class DataRules extends DataAttribute implements DataRulesInterface
     {
         $this->setAttribute('allowed_tags', $allowed_tags);
         return $this->setRule($key, 'strip_tags');
+    }
+
+    /**
+     * Modify a rule value using a custom closure.
+     *
+     * @param string $key The rule key.
+     * @param Closure $p The closure to modify the value.
+     * @return self Returns the current instance of the class.
+     */
+    public function modify(string $key, Closure $p): self
+    {
+        $this->setAttribute('callback_function_' . $key, $p);
+        return $this->setRule($key, 'modify_' . $key);
+    }
+
+    /**
+     * Remove specified keys from the data.
+     *
+     * @param array $keys An array of keys to remove.
+     * @return self Returns the current instance of the class.
+     */
+    public function removeKeys(array $keys): self
+    {
+        $this->setAttribute('remove_keys', $keys);
+        return $this;
+    }
+
+    /**
+     * Add new keys to the data.
+     *
+     * @param array $keys An array of keys to add.
+     * @return self Returns the current instance of the class.
+     * @throws DataValidatorException If keys are not an associative array.
+     */
+    public function addKeys(array $keys): self
+    {
+        if (!(new DataValidator($keys))->isAssoc()) {
+            throw new DataValidatorException("keys must be an associative array");
+        }
+        $this->setAttribute('add_keys', $keys);
+        return $this;
+    }
+
+    /**
+     * Add a new key using a callback function.
+     *
+     * @param string $key The key to add.
+     * @param Closure $callback The callback function to generate the value for the new key.
+     * @return self Returns the current instance of the class.
+     */
+    public function addKeyUseItem(string $key, Closure $callback): self
+    {
+        $this->setIncrement();
+        $this->setAttribute('add_keys_by_using_item_' . $this->getIncrement(), $key);
+        $this->setAttribute('add_keys_by_using_item_callback_' . $this->getIncrement(), $callback);
+        return $this;
+    }
+
+    /**
+     * Sort the data based on specified keys.
+     *
+     * @param array $sortKeys The keys to use for sorting.
+     * @return self Returns the current instance of the class.
+     */
+    public function sortByKeys(array $sortKeys): self
+    {
+        $this->setAttribute('sort', $sortKeys);
+        return $this;
     }
 }

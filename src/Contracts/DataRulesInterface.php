@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Effectra\DataOptimizer\Contracts;
 
+use Closure;
+
 /**
  * interface DataRulesInterface
  *
@@ -210,4 +212,47 @@ interface DataRulesInterface extends DataAttributeInterface
      * @return self Returns the current instance of the class.
      */
     public function stripTags(string $key, $allowed_tags = null): self;
+
+     /**
+     * Modify a rule value using a custom closure.
+     *
+     * @param string $key The rule key.
+     * @param Closure $p The closure to modify the value.
+     * @return self Returns the current instance of the class.
+     */
+    public function modify(string $key, Closure $p): self;
+
+    /**
+     * Remove specified keys from the data.
+     *
+     * @param array $keys An array of keys to remove.
+     * @return self Returns the current instance of the class.
+     */
+    public function removeKeys(array $keys): self;
+
+    /**
+     * Add new keys to the data.
+     *
+     * @param array $keys An array of keys to add.
+     * @return self Returns the current instance of the class.
+     * @throws DataValidatorException If keys are not an associative array.
+     */
+    public function addKeys(array $keys): self;
+
+     /**
+     * Add a new key using a callback function.
+     *
+     * @param string $key The key to add.
+     * @param Closure $callback The callback function to generate the value for the new key.
+     * @return self Returns the current instance of the class.
+     */
+    public function addKeyUseItem(string $key, Closure $callback): self;
+
+    /**
+     * Sort the data based on specified keys.
+     *
+     * @param array $sortKeys The keys to use for sorting.
+     * @return self Returns the current instance of the class.
+     */
+    public function sortByKeys(array $sortKeys): self;
 }

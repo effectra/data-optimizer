@@ -118,9 +118,9 @@ class DataOptimizer
 
         $removed = null;
 
-        if ($rule === 'rename') {
-            $removed = $key;
-            $key = $this->data_rule->getAttribute('new_key_name_' . $key);
+        if ($rule === 'modify_' . $key) {
+            $callback = $this->data_rule->getAttribute('callback_function_' . $key);
+            $value = call_user_func($callback, $key, $value);
         }
 
         return new Result($key, $value, $removed);
@@ -154,12 +154,60 @@ class DataOptimizer
                             unset($item[$result->getRemoved()]);
                         }
                     }
+                    if ($this->data_rule->hasAttribute('rename_' . $key)) {
+                        $item[$this->data_rule->getAttribute('new_key_name_' . $key)] = $value;
+                        unset($item[$this->data_rule->getAttribute('rename_' . $key)]);
+                    }
                 }
 
-                $data[] = $item;
+                if ($this->data_rule->hasAttribute('add_keys')) { {
+                        foreach ($this->data_rule->getAttribute('add_keys') as $k => $v) {
+                            $item[$k] = $v;
+                        }
+                    }
+                }
+
+                for ($i = 1; $i < $this->data_rule->getIncrement() + 1; $i++) {
+                    if ($this->data_rule->hasAttribute('add_keys_by_using_item_' . $i)) {
+                        $v = call_user_func($this->data_rule->getAttribute('add_keys_by_using_item_callback_' . $i), $item);
+                        $item[$this->data_rule->getAttribute('add_keys_by_using_item_' . $i)] = $v;
+                    }
+                }
+
+                if ($this->data_rule->hasAttribute('remove_keys')) {
+                    foreach ($this->data_rule->getAttribute('remove_keys') as $k) {
+                        unset($item[$k]);
+                    }
+                }
+                if ($this->data_rule->hasAttribute('sort')) {
+                    $data[] = $this->sortByKeys($item, $this->data_rule->getAttribute('sort'));
+                } else {
+                    $data[] = $item;
+                }
             }
         }
 
         return $data;
+    }
+
+    /**
+     * sort keys of array using list of keys
+     * @param array $array array you want sort
+     * @param array $keysToSortBy list of keys
+     * @return array sorted array
+     */
+    private function sortByKeys(array $array, array $keysToSortBy): array
+    {
+        $keyPositions = array_flip($keysToSortBy);
+
+        // Sort the array based on key positions
+        uksort($array, function ($key1, $key2) use ($keyPositions) {
+            $position1 = $keyPositions[$key1] ?? PHP_INT_MAX;
+            $position2 = $keyPositions[$key2] ?? PHP_INT_MAX;
+
+            return $position1 - $position2;
+        });
+
+        return $array;
     }
 }
