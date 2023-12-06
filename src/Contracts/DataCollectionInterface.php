@@ -14,7 +14,7 @@ use Traversable;
  * 
  * @package Effectra\DataOptimizer
  */
-interface DataCollectionInterface extends \ArrayAccess, \Countable, \IteratorAggregate
+interface DataCollectionInterface extends \ArrayAccess, \Countable, \IteratorAggregate,\JsonSerializable
 {
     /**
      * Get all items as an array.

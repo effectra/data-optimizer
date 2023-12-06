@@ -395,4 +395,13 @@ class DataCollection implements DataCollectionInterface
     {
         return new ArrayIterator($this->items);
     }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @return array data which can be serialized by json_encode,
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
 }
